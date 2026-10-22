@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { SlidersHorizontal, Heart, ChevronDown, ChevronRight, ChevronLeft, X, Sparkles } from 'lucide-react';
 
 // Comprehensive Category & Models hierarchy configuration
@@ -103,10 +103,12 @@ export default function CollectionsPage({
   wishlist,
   onToggleWishlist,
   onSelectProduct,
-  onNavigateHome
+  onNavigateHome,
+  activeFilter = 'all',
+  setActiveFilter
 }) {
   // Category & Model filters
-  const [selectedCategories, setSelectedCategories] = useState(['chokers', 'necklace-sets']);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedModels, setSelectedModels] = useState([]);
   const [expandedCategories, setExpandedCategories] = useState({
     'chokers': true,
@@ -114,16 +116,43 @@ export default function CollectionsPage({
     'earrings': false,
     'bangles': false,
     'rings': true,
-    'maang-tikka': false
+    'maang-tikka': false,
+    'bridal-sets': true
   });
 
   // Other filters
-  const [priceMax, setPriceMax] = useState(5000);
+  const [priceMax, setPriceMax] = useState(25000);
   const [selectedOccasions, setSelectedOccasions] = useState([]);
   const [selectedFinishes, setSelectedFinishes] = useState(['1-Gram Rold Gold Finish']);
-  const [selectedStoneColor, setSelectedStoneColor] = useState('ruby');
+  const [selectedStoneColor, setSelectedStoneColor] = useState(null);
   const [sortBy, setSortBy] = useState('recommended');
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Sync with activeFilter changes from Navbar or Category Cards
+  useEffect(() => {
+    if (!activeFilter || activeFilter === 'all') {
+      setSelectedCategories([]);
+      setSelectedModels([]);
+      setSelectedOccasions([]);
+      setSortBy('recommended');
+    } else if (activeFilter === 'bridal' || activeFilter === 'bridal-sets') {
+      setSelectedCategories(['bridal-sets', 'chokers']);
+      setSelectedOccasions(['Bridal Wedding']);
+      setSelectedModels([]);
+      setExpandedCategories(prev => ({ ...prev, 'bridal-sets': true, 'chokers': true }));
+    } else if (activeFilter === 'new-arrivals') {
+      setSortBy('newest');
+      setSelectedCategories([]);
+      setSelectedModels([]);
+      setSelectedOccasions([]);
+    } else {
+      // Specific category filter: 'chokers', 'necklace-sets', 'earrings', 'bangles', 'rings', 'maang-tikka', 'waist-belts'
+      setSelectedCategories([activeFilter]);
+      setSelectedModels([]);
+      setSelectedOccasions([]);
+      setExpandedCategories(prev => ({ ...prev, [activeFilter]: true }));
+    }
+  }, [activeFilter]);
 
   // Toggle category expansion
   const toggleExpand = (catId) => {
@@ -179,6 +208,8 @@ export default function CollectionsPage({
     setSelectedOccasions([]);
     setSelectedFinishes([]);
     setSelectedStoneColor(null);
+    setSortBy('recommended');
+    if (setActiveFilter) setActiveFilter('all');
   };
 
   // Active filter tags row
@@ -206,6 +237,15 @@ export default function CollectionsPage({
       });
     });
 
+    // Occasion tags
+    selectedOccasions.forEach(occ => {
+      tags.push({
+        id: `occ-${occ}`,
+        label: occ,
+        onRemove: () => setSelectedOccasions(selectedOccasions.filter(o => o !== occ))
+      });
+    });
+
     // Finish tags
     selectedFinishes.forEach(fin => {
       tags.push({
@@ -225,11 +265,11 @@ export default function CollectionsPage({
     }
 
     return tags;
-  }, [selectedCategories, selectedModels, selectedFinishes, priceMax]);
+  }, [selectedCategories, selectedModels, selectedOccasions, selectedFinishes, priceMax]);
 
   // Filter products by all active criteria (works for both Buy & Rent modes)
   const filteredProducts = useMemo(() => {
-    return products.filter((p) => {
+    let list = products.filter((p) => {
       // 1. Model filter (if any models selected, match against product.model)
       if (selectedModels.length > 0) {
         if (!p.model || !selectedModels.includes(p.model)) {
@@ -239,32 +279,84 @@ export default function CollectionsPage({
 
       // 2. Category filter (if categories selected and no specific model matched)
       if (selectedCategories.length > 0 && selectedModels.length === 0) {
-        if (!selectedCategories.includes(p.categoryId)) {
-          // Allow loose category matches for demo completeness
-          const catMatches = selectedCategories.some(c =>
+        const matchesCategory = selectedCategories.includes(p.categoryId) ||
+          selectedCategories.some(c =>
             (c === 'necklace-sets' && (p.category === 'LONG NECKLACE' || p.category === 'PENDANT SET')) ||
             (c === 'chokers' && p.category === 'CHOKER SET') ||
             (c === 'earrings' && p.category === 'EARRINGS') ||
             (c === 'bangles' && p.category === 'BANGLES SET') ||
             (c === 'rings' && p.category === 'RINGS') ||
-            (c === 'maang-tikka' && p.category === 'MAANG TIKKA')
+            (c === 'maang-tikka' && p.category === 'MAANG TIKKA') ||
+            (c === 'bridal-sets' && (p.occasion === 'Bridal Wedding' || p.category === 'CHOKER SET' || p.category === 'MAANG TIKKA'))
           );
-          if (!catMatches) return false;
-        }
+        if (!matchesCategory) return false;
       }
 
-      // 3. Price Filter (based on current Mode: Rent vs Buy)
+      // 3. Occasion filter
+      if (selectedOccasions.length > 0) {
+        const matchesOccasion = selectedOccasions.some(occ =>
+          p.occasion && p.occasion.toLowerCase().includes(occ.toLowerCase())
+        );
+        if (!matchesOccasion) return false;
+      }
+
+      // 4. Price Filter (based on current Mode: Rent vs Buy)
       const currentPrice = mode === 'rent' ? p.rentPrice : p.buyPrice;
       if (currentPrice > priceMax) return false;
 
-      // 4. Finish filter
+      // 5. Finish filter
       if (selectedFinishes.length > 0 && p.finish && !selectedFinishes.includes(p.finish)) {
         // optional filter
       }
 
       return true;
     });
-  }, [products, selectedCategories, selectedModels, priceMax, selectedFinishes, mode]);
+
+    // 6. Sorting
+    if (sortBy === 'price-low') {
+      list = [...list].sort((a, b) => (mode === 'rent' ? a.rentPrice - b.rentPrice : a.buyPrice - b.buyPrice));
+    } else if (sortBy === 'price-high') {
+      list = [...list].sort((a, b) => (mode === 'rent' ? b.rentPrice - a.rentPrice : b.buyPrice - a.buyPrice));
+    } else if (sortBy === 'rating') {
+      list = [...list].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    } else if (sortBy === 'newest') {
+      list = [...list].sort((a, b) => {
+        const aNew = a.tag === 'New Arrival' ? 1 : 0;
+        const bNew = b.tag === 'New Arrival' ? 1 : 0;
+        return bNew - aNew;
+      });
+    }
+
+    return list;
+  }, [products, selectedCategories, selectedModels, selectedOccasions, priceMax, selectedFinishes, sortBy, mode]);
+
+  // Dynamic Page Header Info
+  const pageHeader = useMemo(() => {
+    if (activeFilter === 'bridal') {
+      return {
+        breadcrumb: 'Bridal Jewellery',
+        eyebrow: 'ROYAL BRIDAL COLLECTION',
+        title: mode === 'rent' ? 'Bridal Jewellery for Rent' : 'Bridal Jewellery Collection',
+        description: 'Exquisite 1-gram rold gold bridal chokers, temple haarams, matha pattis, and cocktail rings curated for your wedding muhurtham and special ceremonies.'
+      };
+    }
+    if (activeFilter === 'new-arrivals') {
+      return {
+        breadcrumb: 'New Arrivals',
+        eyebrow: 'JUST ARRIVED IN SALON',
+        title: mode === 'rent' ? 'New Arrivals for Rent' : 'New Arrivals Jewellery',
+        description: 'Discover freshly crafted 1-gram rold gold masterpieces, sculpted temple peacock suites, and uncut polki heirlooms designed for the current wedding season.'
+      };
+    }
+    return {
+      breadcrumb: mode === 'buy' ? 'Buy Jewellery' : 'Rent Jewellery',
+      eyebrow: mode === 'buy' ? 'PERMANENT POSSESSION' : 'FLEXIBLE OCCASION LUXURY',
+      title: mode === 'buy' ? 'Exquisite Collection to Buy' : 'Exquisite Collection for Rent',
+      description: mode === 'buy'
+        ? 'Handcrafted 1-gram rold gold masterpieces designed for eternity. Own heirloom-quality pieces crafted with precision polish, polki stones, and traditional artistry for your most momentous celebrations.'
+        : 'Wear heirloom-grade designer 1-gram rold gold jewellery for 4, 7, or 10 days at a fraction of the cost. 100% sanitized, secured with damage protection, and delivered 2 days prior to your celebration.'
+    };
+  }, [activeFilter, mode]);
 
   return (
     <div className="collections-page">
@@ -275,10 +367,10 @@ export default function CollectionsPage({
           <nav className="breadcrumb-nav">
             <a href="#" onClick={(e) => { e.preventDefault(); onNavigateHome(); }}>Home</a>
             <span className="breadcrumb-separator">/</span>
-            <a href="#" onClick={(e) => e.preventDefault()}>Collections</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); if (setActiveFilter) setActiveFilter('all'); }}>Collections</a>
             <span className="breadcrumb-separator">/</span>
             <span className="breadcrumb-current">
-              {mode === 'buy' ? 'Buy Jewellery' : 'Rent Jewellery'}
+              {pageHeader.breadcrumb}
             </span>
           </nav>
 
@@ -330,15 +422,13 @@ export default function CollectionsPage({
           <div className="collections-title-row">
             <div>
               <span className="collections-eyebrow">
-                {mode === 'buy' ? 'PERMANENT POSSESSION' : 'FLEXIBLE OCCASION LUXURY'}
+                {pageHeader.eyebrow}
               </span>
               <h1 className="collections-title">
-                {mode === 'buy' ? 'Exquisite Collection to Buy' : 'Exquisite Collection for Rent'}
+                {pageHeader.title}
               </h1>
               <p className="collections-description">
-                {mode === 'buy'
-                  ? 'Handcrafted imitation masterpieces designed for eternity. Own heirloom-quality pieces crafted with precision polish, polki stones, and traditional artistry for your most momentous celebrations.'
-                  : 'Wear heirloom-grade designer jewellery for 4, 7, or 10 days at a fraction of the retail cost. 100% sanitized, secured with damage protection, and delivered 2 days prior to your celebration.'}
+                {pageHeader.description}
               </p>
             </div>
 

@@ -10,6 +10,7 @@ export default function Navbar({
   onOpenWishlist,
   onOpenSearch,
   currentPageView,
+  activeFilter,
   onNavigate,
   user,
   onOpenAuth
@@ -38,54 +39,67 @@ export default function Navbar({
 
         {/* Desktop Navigation Links */}
         <nav className="nav-links">
+          {/* 1. Shop (Navigates to Collections in Buy Mode) */}
           <a
             href="#shop"
-            className={`nav-link ${currentPageView === 'collections' ? 'active' : ''}`}
+            className={`nav-link ${currentPageView === 'collections' && globalMode === 'buy' && activeFilter !== 'bridal' && activeFilter !== 'new-arrivals' ? 'active' : ''}`}
             onClick={(e) => {
               e.preventDefault();
-              onNavigate('collections');
+              onNavigate('collections', 'all', 'buy');
             }}
+            id="nav-link-shop"
           >
             Shop
           </a>
+
+          {/* 2. Rent (Navigates to Collections in Rent Mode) */}
           <a
             href="#rent"
-            className="nav-link"
+            className={`nav-link ${currentPageView === 'collections' && globalMode === 'rent' && activeFilter !== 'bridal' && activeFilter !== 'new-arrivals' ? 'active' : ''}`}
             onClick={(e) => {
               e.preventDefault();
-              setGlobalMode('rent');
-              onNavigate('collections');
+              onNavigate('collections', 'all', 'rent');
             }}
+            id="nav-link-rent"
           >
             Rent
           </a>
+
+          {/* 3. Bridal (Navigates to Bridal Wedding Filter) */}
           <a
             href="#bridal"
-            className="nav-link"
+            className={`nav-link ${currentPageView === 'collections' && activeFilter === 'bridal' ? 'active' : ''}`}
             onClick={(e) => {
               e.preventDefault();
-              onNavigate('collections');
+              onNavigate('collections', 'bridal');
             }}
+            id="nav-link-bridal"
           >
             Bridal
           </a>
+
+          {/* 4. New Arrivals (Navigates to New Arrivals Filter/Sort) */}
           <a
             href="#new-arrivals"
-            className="nav-link"
+            className={`nav-link ${currentPageView === 'collections' && activeFilter === 'new-arrivals' ? 'active' : ''}`}
             onClick={(e) => {
               e.preventDefault();
-              onNavigate('collections');
+              onNavigate('collections', 'new-arrivals');
             }}
+            id="nav-link-new-arrivals"
           >
             New Arrivals
           </a>
+
+          {/* 5. Collections (Navigates to All Collections) */}
           <a
             href="#collections"
-            className={`nav-link ${currentPageView === 'collections' ? 'active' : ''}`}
+            className={`nav-link ${currentPageView === 'collections' && activeFilter === 'all' ? 'active' : ''}`}
             onClick={(e) => {
               e.preventDefault();
-              onNavigate('collections');
+              onNavigate('collections', 'all');
             }}
+            id="nav-link-collections"
           >
             Collections
           </a>
@@ -203,11 +217,11 @@ export default function Navbar({
           flexDirection: 'column',
           gap: '1rem'
         }}>
-          <a href="#shop" onClick={() => setMobileMenuOpen(false)} style={{ fontWeight: 600 }}>Shop</a>
-          <a href="#rent" onClick={() => setMobileMenuOpen(false)} style={{ fontWeight: 600 }}>Rent</a>
-          <a href="#bridal" onClick={() => setMobileMenuOpen(false)} style={{ fontWeight: 600 }}>Bridal</a>
-          <a href="#new-arrivals" onClick={() => setMobileMenuOpen(false)} style={{ fontWeight: 600 }}>New Arrivals</a>
-          <a href="#collections" onClick={() => setMobileMenuOpen(false)} style={{ fontWeight: 600 }}>Collections</a>
+          <a href="#shop" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); onNavigate('collections', 'all', 'buy'); }} style={{ fontWeight: 600 }}>Shop</a>
+          <a href="#rent" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); onNavigate('collections', 'all', 'rent'); }} style={{ fontWeight: 600 }}>Rent</a>
+          <a href="#bridal" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); onNavigate('collections', 'bridal'); }} style={{ fontWeight: 600 }}>Bridal</a>
+          <a href="#new-arrivals" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); onNavigate('collections', 'new-arrivals'); }} style={{ fontWeight: 600 }}>New Arrivals</a>
+          <a href="#collections" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); onNavigate('collections', 'all'); }} style={{ fontWeight: 600 }}>Collections</a>
         </div>
       )}
     </header>

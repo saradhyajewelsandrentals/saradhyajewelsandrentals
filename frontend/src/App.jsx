@@ -532,9 +532,10 @@ export default function App() {
         onOpenWishlist={() => setIsWishlistOpen(true)}
         onOpenSearch={() => setIsSearchOpen(true)}
         currentPageView={currentPageView}
-        onNavigate={(page) => {
+        activeFilter={activeFilter}
+        onNavigate={(page, filter = 'all', mode = null) => {
           if (page === 'home') navigateToHome();
-          else navigateToCollections();
+          else navigateToCollections(filter, mode);
         }}
         user={user}
         onOpenAuth={() => setIsAuthOpen(true)}
@@ -600,6 +601,8 @@ export default function App() {
             onToggleWishlist={handleToggleWishlist}
             onSelectProduct={(prod) => setSelectedProduct(prod)}
             onNavigateHome={navigateToHome}
+            activeFilter={activeFilter}
+            setActiveFilter={setActiveFilter}
           />
         )}
       </main>
