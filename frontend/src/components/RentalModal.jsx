@@ -24,8 +24,8 @@ export default function RentalModal({ product, onClose, onAddToCart }) {
     if (!product) return;
 
     if (mode === 'rent') {
-      setLoading(true);
-      fetch('http://localhost:5000/api/rentals/calculate', {
+      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      fetch(`${apiBase}/rentals/calculate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

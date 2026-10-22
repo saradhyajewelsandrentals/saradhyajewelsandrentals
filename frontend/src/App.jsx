@@ -15,7 +15,7 @@ import WishlistDrawer from './components/WishlistDrawer';
 import SearchModal from './components/SearchModal';
 import './App.css';
 
-const API_BASE = 'http://localhost:5000/api';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Fallback initial data ensuring zero delay or broken render
 const DEFAULT_CATEGORIES = [

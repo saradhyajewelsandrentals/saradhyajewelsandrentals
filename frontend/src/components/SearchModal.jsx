@@ -22,7 +22,8 @@ export default function SearchModal({ isOpen, onClose, onSelectProduct }) {
 
     const timer = setTimeout(() => {
       setLoading(true);
-      fetch(`http://localhost:5000/api/products?search=${encodeURIComponent(query)}`)
+      const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      fetch(`${apiBase}/products?search=${encodeURIComponent(query)}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
