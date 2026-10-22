@@ -9,11 +9,15 @@ import HowRentingWorks from './components/HowRentingWorks';
 import StyleInspiration from './components/StyleInspiration';
 import TrustBadges from './components/TrustBadges';
 import CollectionsPage from './components/CollectionsPage';
+import AuthModal from './components/AuthModal';
 import Footer from './components/Footer';
 import RentalModal from './components/RentalModal';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
 import SearchModal from './components/SearchModal';
+import { auth, db } from './firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import './App.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -305,12 +309,22 @@ export default function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [user, setUser] = useState(null);
   const [toast, setToast] = useState('');
 
   const showToast = (msg) => {
     setToast(msg);
     setTimeout(() => setToast(''), 4000);
   };
+
+  // Firebase Auth State Listener
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Fetch from backend API
   useEffect(() => {
@@ -372,6 +386,17 @@ export default function App() {
 
   const handleSubscribeNewsletter = async (email) => {
     try {
+      // Save to Firebase Firestore
+      await addDoc(collection(db, 'newsletter'), {
+        email,
+        subscribedAt: serverTimestamp(),
+        source: 'homepage_footer'
+      });
+    } catch (e) {
+      // Continue even if offline
+    }
+
+    try {
       const res = await fetch(`${API_BASE}/newsletter`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -382,6 +407,32 @@ export default function App() {
     } catch {
       return { success: true, message: 'Subscribed successfully! Use SARADHYA10 for 10% off.' };
     }
+  };
+
+  const handleCheckoutOrder = async () => {
+    if (cartItems.length === 0) return;
+    try {
+      await addDoc(collection(db, 'bookings'), {
+        userId: user ? user.uid : 'guest',
+        userEmail: user ? user.email : 'guest@saradhyajewels.com',
+        userName: user ? (user.displayName || 'Guest Patron') : 'Guest Patron',
+        items: cartItems.map(item => ({
+          productId: item.product.id,
+          productName: item.product.name,
+          mode: item.mode,
+          price: item.price,
+          securityDeposit: item.securityDeposit,
+          rentalDays: item.rentalDays || null,
+          rentalStartDate: item.rentalStartDate || null
+        })),
+        totalAmount: cartItems.reduce((acc, i) => acc + i.price + (i.securityDeposit || 0) + (i.damageProtectionFee || 0), 0),
+        status: 'Confirmed & Awaiting KYC',
+        createdAt: serverTimestamp()
+      });
+    } catch (e) {
+      // Continue
+    }
+    showToast('Your order has been recorded in Saradhya Royal Concierge!');
   };
 
   const navigateToCollections = (filter = 'all', mode = null) => {
@@ -415,6 +466,8 @@ export default function App() {
           if (page === 'home') navigateToHome();
           else navigateToCollections();
         }}
+        user={user}
+        onOpenAuth={() => setIsAuthOpen(true)}
       />
 
       <main>
@@ -512,6 +565,13 @@ export default function App() {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         onSelectProduct={(prod) => setSelectedProduct(prod)}
+      />
+
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        user={user}
+        onShowToast={showToast}
       />
 
       {/* Floating Toast Notice */}

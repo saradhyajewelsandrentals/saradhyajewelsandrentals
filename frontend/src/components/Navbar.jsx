@@ -10,7 +10,9 @@ export default function Navbar({
   onOpenWishlist,
   onOpenSearch,
   currentPageView,
-  onNavigate
+  onNavigate,
+  user,
+  onOpenAuth
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
@@ -146,14 +148,43 @@ export default function Navbar({
             {cartCount > 0 && <span className="icon-badge">{cartCount}</span>}
           </button>
 
-          {/* Profile Button */}
+          {/* Profile / Firebase Auth Button */}
           <button
             className="nav-icon-btn"
             aria-label="My Account"
             id="nav-account-btn"
-            onClick={() => alert('Welcome to Saradhya Concierge. Please sign in to view your bookings.')}
+            onClick={onOpenAuth}
+            title={user ? `Signed in as ${user.displayName || user.email}` : 'Sign In'}
           >
-            <User size={20} />
+            {user ? (
+              user.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt="Profile"
+                  style={{ width: 26, height: 26, borderRadius: '50%', border: '1.5px solid var(--gold-500)' }}
+                />
+              ) : (
+                <span
+                  style={{
+                    width: 26,
+                    height: 26,
+                    borderRadius: '50%',
+                    backgroundColor: 'var(--maroon-800)',
+                    color: '#ffffff',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1.5px solid var(--gold-500)'
+                  }}
+                >
+                  {(user.displayName || user.email || 'S').charAt(0).toUpperCase()}
+                </span>
+              )
+            ) : (
+              <User size={20} />
+            )}
           </button>
 
           {/* Mobile Menu Toggle */}
