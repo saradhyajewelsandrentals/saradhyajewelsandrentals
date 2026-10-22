@@ -381,6 +381,8 @@ export default function App() {
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [authPrompt, setAuthPrompt] = useState(null);
+  const [pendingCartItem, setPendingCartItem] = useState(null);
   const [user, setUser] = useState(null);
   const [toast, setToast] = useState('');
 
@@ -389,13 +391,21 @@ export default function App() {
     setTimeout(() => setToast(''), 4000);
   };
 
-  // Firebase Auth State Listener
+  // Firebase Auth State Listener & auto-add pending cart item upon sign-in
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      if (currentUser && pendingCartItem) {
+        setCartItems(prev => [...prev, pendingCartItem]);
+        showToast(`Welcome! Added ${pendingCartItem.product.name} to your bag.`);
+        setPendingCartItem(null);
+        setAuthPrompt(null);
+        setIsCartOpen(true);
+        setSelectedProduct(null);
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [pendingCartItem]);
 
   // Fetch from backend API
   useEffect(() => {
@@ -441,9 +451,16 @@ export default function App() {
     }
   };
 
-  // Add to Bag / Cart
+  // Add to Bag / Cart - Enforce user sign-in/sign-up
   const handleAddToCart = (orderItem) => {
-    setCartItems([...cartItems, orderItem]);
+    if (!user) {
+      setPendingCartItem(orderItem);
+      setAuthPrompt(`Please sign in or create an account to reserve "${orderItem.product.name}" and proceed to your bag.`);
+      setIsAuthOpen(true);
+      showToast('Please sign in or create an account to add to bag.');
+      return;
+    }
+    setCartItems(prev => [...prev, orderItem]);
     showToast(`Added ${orderItem.product.name} to your bag.`);
     setIsCartOpen(true);
   };
@@ -665,9 +682,13 @@ export default function App() {
 
       <AuthModal
         isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
+        onClose={() => {
+          setIsAuthOpen(false);
+          setAuthPrompt(null);
+        }}
         user={user}
         onShowToast={showToast}
+        authPrompt={authPrompt}
       />
 
       {/* Floating Toast Notice */}

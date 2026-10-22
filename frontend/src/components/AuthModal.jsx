@@ -9,7 +9,7 @@ import {
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 
-export default function AuthModal({ isOpen, onClose, user, onShowToast }) {
+export default function AuthModal({ isOpen, onClose, user, onShowToast, authPrompt = null }) {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -128,15 +128,31 @@ export default function AuthModal({ isOpen, onClose, user, onShowToast }) {
         ) : (
           /* Sign In / Sign Up Form */
           <div>
-            <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <div className="logo-symbol" style={{ margin: '0 auto 0.75rem auto' }}>S</div>
               <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', color: 'var(--charcoal-900)' }}>
-                {isSignUp ? 'Create Saradhya Account' : 'Welcome to Saradhya'}
+                {isSignUp ? 'Create Saradhya Account' : 'Sign In to Your Account'}
               </h3>
               <p style={{ fontSize: '0.85rem', color: 'var(--charcoal-500)', marginTop: 4 }}>
-                {isSignUp ? 'Join our luxury bridal circle' : 'Sign in to manage your rentals & orders'}
+                {authPrompt || (isSignUp ? 'Join our luxury bridal circle' : 'Sign in to reserve rentals & manage orders')}
               </p>
             </div>
+
+            {authPrompt && (
+              <div style={{
+                backgroundColor: '#fbf5ea',
+                border: '1px solid #ecd8b3',
+                borderRadius: 8,
+                padding: '0.75rem 1rem',
+                marginBottom: '1.25rem',
+                fontSize: '0.82rem',
+                color: 'var(--maroon-900)',
+                lineHeight: 1.5,
+                textAlign: 'center'
+              }}>
+                ✨ <strong>Almost there!</strong> Sign in or sign up below to add this piece to your bag.
+              </div>
+            )}
 
             {/* Google Sign In Button */}
             <button

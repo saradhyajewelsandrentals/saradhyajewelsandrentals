@@ -171,29 +171,38 @@ export default function Navbar({
           </button>
 
           {/* Profile / Firebase Auth Button */}
-          <button
-            className="nav-icon-btn"
-            aria-label="My Account"
-            id="nav-account-btn"
-            onClick={onOpenAuth}
-            title={user ? `Signed in as ${user.displayName || user.email}` : 'Sign In'}
-          >
-            {user ? (
-              user.photoURL ? (
+          {user ? (
+            <button
+              className="nav-icon-btn profile-pill-btn"
+              aria-label="My Account"
+              id="nav-account-btn"
+              onClick={onOpenAuth}
+              title={`Signed in as ${user.displayName || user.email}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                padding: '3px 10px 3px 4px',
+                borderRadius: 999,
+                border: '1px solid #e5dcce',
+                backgroundColor: '#ffffff'
+              }}
+            >
+              {user.photoURL ? (
                 <img
                   src={user.photoURL}
                   alt="Profile"
-                  style={{ width: 26, height: 26, borderRadius: '50%', border: '1.5px solid var(--gold-500)' }}
+                  style={{ width: 24, height: 24, borderRadius: '50%', border: '1.5px solid var(--gold-500)' }}
                 />
               ) : (
                 <span
                   style={{
-                    width: 26,
-                    height: 26,
+                    width: 24,
+                    height: 24,
                     borderRadius: '50%',
                     backgroundColor: 'var(--maroon-800)',
                     color: '#ffffff',
-                    fontSize: '0.75rem',
+                    fontSize: '0.72rem',
                     fontWeight: 700,
                     display: 'flex',
                     alignItems: 'center',
@@ -203,11 +212,38 @@ export default function Navbar({
                 >
                   {(user.displayName || user.email || 'S').charAt(0).toUpperCase()}
                 </span>
-              )
-            ) : (
-              <User size={20} />
-            )}
-          </button>
+              )}
+              <span style={{ fontSize: '0.78rem', fontWeight: 600, color: 'var(--maroon-900)' }}>
+                {(user.displayName || user.email || '').split(' ')[0].split('@')[0]}
+              </span>
+            </button>
+          ) : (
+            <button
+              className="header-signin-pill"
+              aria-label="Sign In"
+              id="nav-signin-btn"
+              onClick={onOpenAuth}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                backgroundColor: 'var(--maroon-800)',
+                color: '#ffffff',
+                border: '1px solid var(--maroon-900)',
+                padding: '0.42rem 0.95rem',
+                borderRadius: 999,
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                letterSpacing: '0.03em',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                boxShadow: '0 2px 8px rgba(88,17,26,0.18)'
+              }}
+            >
+              <User size={14} />
+              <span>Sign In</span>
+            </button>
+          )}
 
           {/* Mobile Menu Toggle */}
           <button
