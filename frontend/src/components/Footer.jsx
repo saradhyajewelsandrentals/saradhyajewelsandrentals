@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function Footer({ onSubscribeNewsletter }) {
+export default function Footer({ onSubscribeNewsletter, onNavigate }) {
   const [email, setEmail] = useState('');
   const [statusMsg, setStatusMsg] = useState('');
 
@@ -21,7 +21,10 @@ export default function Footer({ onSubscribeNewsletter }) {
           <div className="footer-col footer-brand">
             <span className="footer-brand-title">Saradhya</span>
             <p className="footer-brand-desc">
-              Timelessly crafted and impeccably styled jewellery rentals & heirlooms for your memorable occasions.
+              Timelessly crafted and impeccably styled 1-gram rold gold jewellery rentals & heirlooms for your memorable occasions.
+            </p>
+            <p style={{ fontSize: '0.82rem', color: '#888', marginTop: '0.5rem' }}>
+              Email: <a href="mailto:saradhyajewelsandrentals@gmail.com" style={{ color: 'var(--maroon-700)', fontWeight: 600 }}>saradhyajewelsandrentals@gmail.com</a>
             </p>
           </div>
 
@@ -29,10 +32,10 @@ export default function Footer({ onSubscribeNewsletter }) {
           <div className="footer-col">
             <h4 className="footer-heading">Customer Service</h4>
             <ul className="footer-links">
-              <li><a href="#contact" onClick={(e) => { e.preventDefault(); alert('Concierge: concierge@saradhyajewels.com | +91 98765 43210'); }}>Contact Us</a></li>
-              <li><a href="#shipping" onClick={(e) => { e.preventDefault(); alert('We deliver Pan-India 2 days prior to your event.'); }}>Shipping & Returns</a></li>
-              <li><a href="#guidelines" onClick={(e) => { e.preventDefault(); alert('All rentals include sanitization and protective velvet packaging.'); }}>Rental Guidelines</a></li>
-              <li><a href="#care" onClick={(e) => { e.preventDefault(); alert('Store away from direct moisture and perfume sprays.'); }}>Jewellery Care</a></li>
+              <li><a href="#contact" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('contact'); }}>Contact Us</a></li>
+              <li><a href="#shipping" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('terms'); }}>Shipping & Returns</a></li>
+              <li><a href="#guidelines" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('guidelines'); }}>Rental Guidelines</a></li>
+              <li><a href="#care" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('guidelines'); }}>Jewellery Care</a></li>
             </ul>
           </div>
 
@@ -40,10 +43,10 @@ export default function Footer({ onSubscribeNewsletter }) {
           <div className="footer-col">
             <h4 className="footer-heading">Quick Links</h4>
             <ul className="footer-links">
-              <li><a href="#faqs" onClick={(e) => { e.preventDefault(); alert('Security deposit is 100% refunded upon return inspection.'); }}>FAQs</a></li>
-              <li><a href="#about" onClick={(e) => { e.preventDefault(); alert('Saradhya was founded to make royal bridal heirlooms accessible to every bride.'); }}>About Saradhya</a></li>
-              <li><a href="#terms" onClick={(e) => { e.preventDefault(); alert('Standard terms apply for return dates and care.'); }}>Terms of Service</a></li>
-              <li><a href="#privacy" onClick={(e) => { e.preventDefault(); alert('We protect customer privacy strictly.'); }}>Privacy Policy</a></li>
+              <li><a href="#faqs" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('guidelines'); }}>FAQs</a></li>
+              <li><a href="#about" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('home'); }}>About Saradhya</a></li>
+              <li><a href="#terms" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('terms'); }}>Terms & Conditions</a></li>
+              <li><a href="#privacy" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('privacy'); }}>Privacy Policy</a></li>
             </ul>
           </div>
 

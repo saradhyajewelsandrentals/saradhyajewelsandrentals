@@ -9,6 +9,7 @@ import HowRentingWorks from './components/HowRentingWorks';
 import StyleInspiration from './components/StyleInspiration';
 import TrustBadges from './components/TrustBadges';
 import CollectionsPage from './components/CollectionsPage';
+import PolicyPages from './components/PolicyPages';
 import AuthModal from './components/AuthModal';
 import Footer from './components/Footer';
 import RentalModal from './components/RentalModal';
@@ -517,6 +518,17 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const navigateToPage = (page, filter = 'all', mode = null) => {
+    if (page === 'home') {
+      navigateToHome();
+    } else if (page === 'collections') {
+      navigateToCollections(filter, mode);
+    } else if (['privacy', 'terms', 'guidelines', 'contact'].includes(page)) {
+      setCurrentPageView(page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="saradhya-app">
       {/* Navbar */}
@@ -533,10 +545,7 @@ export default function App() {
         onOpenSearch={() => setIsSearchOpen(true)}
         currentPageView={currentPageView}
         activeFilter={activeFilter}
-        onNavigate={(page, filter = 'all', mode = null) => {
-          if (page === 'home') navigateToHome();
-          else navigateToCollections(filter, mode);
-        }}
+        onNavigate={navigateToPage}
         user={user}
         onOpenAuth={() => setIsAuthOpen(true)}
       />
@@ -591,7 +600,7 @@ export default function App() {
             {/* 8. Trust & Value Badges */}
             <TrustBadges badges={badges} />
           </>
-        ) : (
+        ) : currentPageView === 'collections' ? (
           /* COLLECTIONS / BUY JEWELLERY LISTING PAGE */
           <CollectionsPage
             mode={globalMode}
@@ -604,11 +613,25 @@ export default function App() {
             activeFilter={activeFilter}
             setActiveFilter={setActiveFilter}
           />
+        ) : (
+          /* DEDICATED SEPARATE POLICY & CONTACT PAGES (INDIAN STANDARDS) */
+          <PolicyPages
+            activeTab={currentPageView}
+            onSelectTab={(tab) => {
+              setCurrentPageView(tab);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onNavigateHome={navigateToHome}
+            onNavigateCollections={() => navigateToCollections('all')}
+          />
         )}
       </main>
 
       {/* Footer */}
-      <Footer onSubscribeNewsletter={handleSubscribeNewsletter} />
+      <Footer
+        onSubscribeNewsletter={handleSubscribeNewsletter}
+        onNavigate={navigateToPage}
+      />
 
       {/* Interactive Modals & Drawers */}
       <RentalModal

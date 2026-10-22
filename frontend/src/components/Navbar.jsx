@@ -103,6 +103,19 @@ export default function Navbar({
           >
             Collections
           </a>
+
+          {/* 6. Contact Us */}
+          <a
+            href="#contact"
+            className={`nav-link ${currentPageView === 'contact' ? 'active' : ''}`}
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate('contact');
+            }}
+            id="nav-link-contact"
+          >
+            Contact
+          </a>
         </nav>
 
         {/* Right Actions */}
@@ -222,6 +235,10 @@ export default function Navbar({
           <a href="#bridal" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); onNavigate('collections', 'bridal'); }} style={{ fontWeight: 600 }}>Bridal</a>
           <a href="#new-arrivals" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); onNavigate('collections', 'new-arrivals'); }} style={{ fontWeight: 600 }}>New Arrivals</a>
           <a href="#collections" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); onNavigate('collections', 'all'); }} style={{ fontWeight: 600 }}>Collections</a>
+          <a href="#contact" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); onNavigate('contact'); }} style={{ fontWeight: 600 }}>Contact Us</a>
+          <a href="#guidelines" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); onNavigate('guidelines'); }} style={{ fontSize: '0.9rem', color: '#666' }}>Rental Guidelines</a>
+          <a href="#terms" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); onNavigate('terms'); }} style={{ fontSize: '0.9rem', color: '#666' }}>Terms & Conditions</a>
+          <a href="#privacy" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); onNavigate('privacy'); }} style={{ fontSize: '0.9rem', color: '#666' }}>Privacy Policy</a>
         </div>
       )}
     </header>
