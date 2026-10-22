@@ -19,7 +19,7 @@ import WishlistDrawer from './components/WishlistDrawer';
 import SearchModal from './components/SearchModal';
 import { auth, db } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
 import './App.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -441,6 +441,17 @@ export default function App() {
       .catch(() => {});
   }, []);
 
+  // Real-time Firestore sync: Any price/image/product changes by admin immediately update live on customer store
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, 'catalog_products'), (snapshot) => {
+      if (!snapshot.empty) {
+        const liveProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setProducts(liveProducts);
+      }
+    }, () => {});
+    return () => unsub();
+  }, []);
+
   // Wishlist Toggle
   const handleToggleWishlist = (productId) => {
     if (wishlist.includes(productId)) {
@@ -554,12 +565,12 @@ export default function App() {
     }
   };
 
-  // URL route listener (supports /admin, #admin, /privacy, etc.)
+  // URL route listener (supports secret /saradhya-internal-admin, /admin, #admin, /privacy, etc.)
   useEffect(() => {
     const handleUrlRoute = () => {
       const path = window.location.pathname;
       const hash = window.location.hash;
-      if (path === '/admin' || hash === '#admin') {
+      if (path === '/admin' || path === '/saradhya-internal-admin' || hash === '#admin') {
         setCurrentPageView('admin');
       } else if (['/privacy', '/terms', '/guidelines', '/contact'].includes(path)) {
         setCurrentPageView(path.replace('/', ''));

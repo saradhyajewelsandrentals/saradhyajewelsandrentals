@@ -150,6 +150,21 @@ export default function AdminPanel({
     }
   };
 
+  // Sync entire initial collection to Cloud Firestore with 1 click
+  const [syncStatus, setSyncStatus] = useState('');
+  const handleSyncAllToFirestore = async () => {
+    setSyncStatus('Syncing to Cloud Firestore...');
+    try {
+      for (const prod of products) {
+        await setDoc(doc(db, 'catalog_products', prod.id), prod, { merge: true });
+      }
+      setSyncStatus(`✓ All ${products.length} products synced to Cloud Firestore successfully!`);
+      setTimeout(() => setSyncStatus(''), 6000);
+    } catch (e) {
+      setSyncStatus('Error syncing to Firestore. Check permissions.');
+    }
+  };
+
   // -------------------------------------------------------------
   // RENDER: LOGIN GATE
   // -------------------------------------------------------------
@@ -421,9 +436,36 @@ export default function AdminPanel({
                 </select>
               </div>
 
-              {/* Add New Product Button */}
-              <button
-                className="btn-primary"
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                {syncStatus && (
+                  <span style={{ fontSize: '0.78rem', color: '#2e7d32', fontWeight: 600 }}>
+                    {syncStatus}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={handleSyncAllToFirestore}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    padding: '0.65rem 1rem',
+                    borderRadius: 8,
+                    border: '1px solid #d4af37',
+                    backgroundColor: '#fffdf7',
+                    color: '#8b6914',
+                    fontWeight: 600,
+                    fontSize: '0.84rem',
+                    cursor: 'pointer'
+                  }}
+                  title="Upload all current catalog items into Firebase Cloud Firestore database"
+                >
+                  <Sparkles size={15} color="#d4af37" /> Sync to Cloud Firestore
+                </button>
+
+                {/* Add New Product Button */}
+                <button
+                  className="btn-primary"
                 onClick={() => {
                   setEditingProduct({
                     id: `prod-${Date.now()}`,
@@ -456,6 +498,7 @@ export default function AdminPanel({
               >
                 <Plus size={16} /> Add New Jewellery Piece
               </button>
+              </div>
             </div>
 
             {/* Products Table Card */}

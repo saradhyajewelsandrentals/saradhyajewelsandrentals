@@ -47,7 +47,6 @@ export default function Footer({ onSubscribeNewsletter, onNavigate }) {
               <li><a href="#about" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('home'); }}>About Saradhya</a></li>
               <li><a href="#terms" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('terms'); }}>Terms & Conditions</a></li>
               <li><a href="#privacy" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('privacy'); }}>Privacy Policy</a></li>
-              <li><a href="/admin" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('admin'); }} style={{ color: 'var(--gold-600)', fontWeight: 600 }}>✦ Admin Portal</a></li>
             </ul>
           </div>
 
