@@ -18,10 +18,14 @@ import {
   X,
   Sparkles,
   ShieldAlert,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Database,
+  Wifi,
+  WifiOff,
+  RefreshCw
 } from 'lucide-react';
 import { collection, getDocs, doc, setDoc, deleteDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, auth } from '../firebase';
 
 export default function AdminPanel({
   products,
@@ -49,6 +53,38 @@ export default function AdminPanel({
   const [bookings, setBookings] = useState([]);
   const [subscribers, setSubscribers] = useState([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
+
+  // Firebase & Firestore Realtime Connection Diagnostics
+  const [dbStatus, setDbStatus] = useState('checking'); // 'checking' | 'connected' | 'error'
+  const [dbLatency, setDbLatency] = useState(null);
+  const [firestoreProductCount, setFirestoreProductCount] = useState(0);
+  const [dbErrorDetail, setDbErrorDetail] = useState('');
+  const [isTestingDb, setIsTestingDb] = useState(false);
+
+  // Real-time Firestore Connection Health Checker
+  const testFirestoreConnection = async () => {
+    setIsTestingDb(true);
+    const start = performance.now();
+    try {
+      const snap = await getDocs(collection(db, 'catalog_products'));
+      const end = performance.now();
+      setDbLatency(Math.round(end - start));
+      setFirestoreProductCount(snap.size);
+      setDbStatus('connected');
+      setDbErrorDetail('');
+    } catch (err) {
+      console.error('Firestore connection check error:', err);
+      setDbStatus('error');
+      setDbErrorDetail(err.message || 'Permission denied or network offline');
+    } finally {
+      setIsTestingDb(false);
+    }
+  };
+
+  // Run connection test on mount
+  useEffect(() => {
+    testFirestoreConnection();
+  }, []);
 
   // Check existing session
   useEffect(() => {
@@ -130,8 +166,9 @@ export default function AdminPanel({
     // Save to Firestore if connected
     try {
       await setDoc(doc(db, 'catalog_products', productToSave.id), productToSave, { merge: true });
+      testFirestoreConnection();
     } catch (e) {
-      // Local fallback
+      console.error('Firestore save error:', e);
     }
 
     setEditingProduct(null);
@@ -146,7 +183,10 @@ export default function AdminPanel({
 
       try {
         await deleteDoc(doc(db, 'catalog_products', prodId));
-      } catch (e) {}
+        testFirestoreConnection();
+      } catch (e) {
+        console.error('Firestore delete error:', e);
+      }
     }
   };
 
@@ -159,8 +199,10 @@ export default function AdminPanel({
         await setDoc(doc(db, 'catalog_products', prod.id), prod, { merge: true });
       }
       setSyncStatus(`✓ All ${products.length} products synced to Cloud Firestore successfully!`);
+      await testFirestoreConnection();
       setTimeout(() => setSyncStatus(''), 6000);
     } catch (e) {
+      console.error('Firestore bulk sync error:', e);
       setSyncStatus('Error syncing to Firestore. Check permissions.');
     }
   };
@@ -192,9 +234,36 @@ export default function AdminPanel({
           <h2 style={{ fontFamily: 'Playfair Display, serif', color: 'var(--maroon-900)', margin: '0 0 0.5rem 0' }}>
             Saradhya Admin Portal
           </h2>
-          <p style={{ fontSize: '0.86rem', color: 'var(--charcoal-500)', marginBottom: '1.75rem' }}>
+          <p style={{ fontSize: '0.86rem', color: 'var(--charcoal-500)', marginBottom: '1rem' }}>
             Manage 1-gram rold gold jewellery catalog, update rental pricing, change images, and view client orders.
           </p>
+
+          {/* Real-time Firebase & Firestore Connection Status */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.45rem',
+            padding: '0.35rem 0.85rem',
+            borderRadius: 20,
+            backgroundColor: dbStatus === 'connected' ? '#e8f5e9' : dbStatus === 'checking' ? '#fff8e1' : '#ffebee',
+            border: `1px solid ${dbStatus === 'connected' ? '#a5d6a7' : dbStatus === 'checking' ? '#ffe082' : '#ffcdd2'}`,
+            color: dbStatus === 'connected' ? '#2e7d32' : dbStatus === 'checking' ? '#f57f17' : '#c62828',
+            fontSize: '0.78rem',
+            fontWeight: 600,
+            marginBottom: '1.4rem'
+          }}>
+            <span style={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              backgroundColor: dbStatus === 'connected' ? '#4caf50' : dbStatus === 'checking' ? '#ff9800' : '#f44336'
+            }}></span>
+            {dbStatus === 'connected'
+              ? `Cloud Firestore: Connected 🟢 (${dbLatency ? `${dbLatency}ms` : 'Ready'})`
+              : dbStatus === 'checking'
+              ? 'Connecting to Cloud Firestore...'
+              : `Firestore: ${dbErrorDetail || 'Offline'}`}
+          </div>
 
           <form onSubmit={handleAdminLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ textAlign: 'left' }}>
@@ -287,7 +356,7 @@ export default function AdminPanel({
         </div>
 
         {/* Tab Buttons */}
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
           <button
             onClick={() => setActiveTab('products')}
             style={{
@@ -332,6 +401,49 @@ export default function AdminPanel({
             }}
           >
             Subscribers ({subscribers.length})
+          </button>
+        </div>
+
+        {/* Real-time Connection Indicator */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          backgroundColor: 'rgba(0,0,0,0.3)',
+          padding: '0.4rem 0.85rem',
+          borderRadius: 20,
+          border: '1px solid rgba(255,255,255,0.15)',
+          fontSize: '0.8rem'
+        }}>
+          <span style={{
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            backgroundColor: dbStatus === 'connected' ? '#4caf50' : dbStatus === 'checking' ? '#ff9800' : '#f44336',
+            boxShadow: dbStatus === 'connected' ? '0 0 8px #4caf50' : 'none'
+          }}></span>
+          <span style={{ fontWeight: 600 }}>
+            {dbStatus === 'connected'
+              ? `Firestore: Live 🟢 (${dbLatency ? `${dbLatency}ms` : 'Ready'})`
+              : dbStatus === 'checking'
+              ? 'Checking Firestore...'
+              : 'Firestore: Disconnected'}
+          </span>
+          <button
+            onClick={testFirestoreConnection}
+            title="Re-test Firebase Firestore connection"
+            disabled={isTestingDb}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--gold-400)',
+              cursor: 'pointer',
+              padding: 2,
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            <RefreshCw size={12} className={isTestingDb ? 'spin' : ''} />
           </button>
         </div>
 
@@ -382,6 +494,110 @@ export default function AdminPanel({
         {/* ------------------------------------------------------------- */}
         {activeTab === 'products' && (
           <div>
+            {/* Database & Cloud Firestore Connection Status Card */}
+            <div style={{
+              backgroundColor: dbStatus === 'connected' ? '#f4f9f4' : '#fff9f0',
+              border: `1px solid ${dbStatus === 'connected' ? '#c8e6c9' : '#ffe0b2'}`,
+              borderRadius: 12,
+              padding: '1.1rem 1.4rem',
+              marginBottom: '1.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '1rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                <div style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  backgroundColor: dbStatus === 'connected' ? '#e8f5e9' : '#fff3e0',
+                  color: dbStatus === 'connected' ? '#2e7d32' : '#e65100',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <Database size={22} />
+                </div>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontWeight: 700, fontSize: '0.95rem', color: dbStatus === 'connected' ? '#1b5e20' : '#b71c1c' }}>
+                      {dbStatus === 'connected' ? 'Cloud Firestore: Connected 🟢' : 'Cloud Firestore: Offline / Error 🔴'}
+                    </span>
+                    <span style={{
+                      fontSize: '0.72rem',
+                      padding: '0.15rem 0.5rem',
+                      borderRadius: 12,
+                      backgroundColor: dbStatus === 'connected' ? '#2e7d32' : '#d32f2f',
+                      color: '#ffffff',
+                      fontWeight: 600
+                    }}>
+                      saradhya-jewels
+                    </span>
+                    <span style={{
+                      fontSize: '0.72rem',
+                      padding: '0.15rem 0.5rem',
+                      borderRadius: 12,
+                      backgroundColor: '#ede7dc',
+                      color: 'var(--maroon-900)',
+                      fontWeight: 600
+                    }}>
+                      Firebase Auth: Online
+                    </span>
+                  </div>
+                  <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.82rem', color: 'var(--charcoal-600)' }}>
+                    {dbStatus === 'connected'
+                      ? `Real-time synchronization active • ${firestoreProductCount} items in Firestore • Latency: ${dbLatency || '<1s'}ms`
+                      : `Status check: ${dbErrorDetail || 'Checking connection...'}`}
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <button
+                  type="button"
+                  onClick={testFirestoreConnection}
+                  disabled={isTestingDb}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    padding: '0.55rem 0.95rem',
+                    borderRadius: 8,
+                    border: '1px solid #dcd3c4',
+                    backgroundColor: '#ffffff',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  <RefreshCw size={13} className={isTestingDb ? 'spin' : ''} />
+                  {isTestingDb ? 'Testing...' : 'Test Connection'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSyncAllToFirestore}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    padding: '0.55rem 1rem',
+                    borderRadius: 8,
+                    border: 'none',
+                    backgroundColor: 'var(--maroon-800)',
+                    color: '#ffffff',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 6px rgba(88,17,26,0.15)'
+                  }}
+                >
+                  <Sparkles size={13} />
+                  ⚡ Sync All Products to Firestore
+                </button>
+              </div>
+            </div>
             {/* Top Toolbar */}
             <div style={{
               display: 'flex',

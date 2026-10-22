@@ -377,7 +377,7 @@ export default function App() {
   // Interactive States
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [cartItems, setCartItems] = useState([]);
-  const [wishlist, setWishlist] = useState(['prod-1', 'prod-4']);
+  const [wishlist, setWishlist] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);

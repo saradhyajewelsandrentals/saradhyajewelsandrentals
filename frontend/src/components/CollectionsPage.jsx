@@ -123,7 +123,7 @@ export default function CollectionsPage({
   // Other filters
   const [priceMax, setPriceMax] = useState(25000);
   const [selectedOccasions, setSelectedOccasions] = useState([]);
-  const [selectedFinishes, setSelectedFinishes] = useState(['1-Gram Rold Gold Finish']);
+  const [selectedFinishes, setSelectedFinishes] = useState([]);
   const [selectedStoneColor, setSelectedStoneColor] = useState(null);
   const [sortBy, setSortBy] = useState('recommended');
   const [currentPage, setCurrentPage] = useState(1);
@@ -134,6 +134,8 @@ export default function CollectionsPage({
       setSelectedCategories([]);
       setSelectedModels([]);
       setSelectedOccasions([]);
+      setSelectedFinishes([]);
+      setSelectedStoneColor(null);
       setSortBy('recommended');
     } else if (activeFilter === 'bridal' || activeFilter === 'bridal-sets') {
       setSelectedCategories(['bridal-sets', 'chokers']);
@@ -305,8 +307,10 @@ export default function CollectionsPage({
       if (currentPrice > priceMax) return false;
 
       // 5. Finish filter
-      if (selectedFinishes.length > 0 && p.finish && !selectedFinishes.includes(p.finish)) {
-        // optional filter
+      if (selectedFinishes.length > 0) {
+        if (!p.finish || !selectedFinishes.includes(p.finish)) {
+          return false;
+        }
       }
 
       return true;
