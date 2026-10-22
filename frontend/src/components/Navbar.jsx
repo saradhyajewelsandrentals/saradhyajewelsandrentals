@@ -18,11 +18,6 @@ export default function Navbar({
 
   return (
     <header className="site-header">
-      {/* Top subtle announcement */}
-      <div className="announcement-bar">
-        <span>✨ ROYAL BRIDAL CONCIERGE:</span> Free Pan-India Delivery on rentals above ₹1,999 • 100% Sanitized & Damage Insured
-      </div>
-
       <div className="container nav-container">
         {/* Brand Logo */}
         <a
