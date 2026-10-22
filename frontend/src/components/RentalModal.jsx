@@ -229,8 +229,8 @@ export default function RentalModal({ product, onClose, onAddToCart }) {
                   </span>
                 </div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--charcoal-500)' }}>
-                  ✓ Includes lifetime polish guarantee<br />
-                  ✓ Authentic Hallmark certificate<br />
+                  ✓ Long-lasting 1-gram rold gold micro-coating<br />
+                  ✓ 100% skin-friendly, lead & nickel free brass base<br />
                   ✓ Complimentary luxury velvet keepsake chest
                 </div>
               </div>

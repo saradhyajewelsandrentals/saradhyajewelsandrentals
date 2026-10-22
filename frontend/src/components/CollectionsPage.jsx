@@ -11,7 +11,7 @@ export const CATEGORY_MODELS_CONFIG = [
       { id: 'Royal Kundan Chokers', label: 'Royal Kundan Chokers', count: 6 },
       { id: 'Polki Chokers', label: 'Polki Chokers', count: 4 },
       { id: 'Jaipur Meenakari Chokers', label: 'Jaipur Meenakari Chokers', count: 3 },
-      { id: 'Temple Gold Chokers', label: 'Temple Gold Chokers', count: 2 },
+      { id: 'Temple Rold Gold Chokers', label: 'Temple Rold Gold Chokers', count: 2 },
       { id: 'Tribal Silver Ghungroo Chokers', label: 'Tribal Silver Ghungroo Chokers', count: 2 },
       { id: 'Pearl Collar Chokers', label: 'Pearl Collar Chokers', count: 1 }
     ]
@@ -79,7 +79,7 @@ export const CATEGORY_MODELS_CONFIG = [
     label: 'Waist Belts / Vaddanam',
     count: 10,
     models: [
-      { id: 'Temple Gold Goddess Vaddanam', label: 'Temple Gold Goddess Vaddanam', count: 4 },
+      { id: 'Temple Rold Gold Goddess Vaddanam', label: 'Temple Rold Gold Goddess Vaddanam', count: 4 },
       { id: 'Polki Kamarbandh', label: 'Polki Kamarbandh', count: 3 },
       { id: 'Adjustable Sleek Waist Chains', label: 'Adjustable Sleek Waist Chains', count: 3 }
     ]
@@ -120,7 +120,7 @@ export default function CollectionsPage({
   // Other filters
   const [priceMax, setPriceMax] = useState(5000);
   const [selectedOccasions, setSelectedOccasions] = useState([]);
-  const [selectedFinishes, setSelectedFinishes] = useState(['24K Antique Gold Polish']);
+  const [selectedFinishes, setSelectedFinishes] = useState(['1-Gram Rold Gold Finish']);
   const [selectedStoneColor, setSelectedStoneColor] = useState('ruby');
   const [sortBy, setSortBy] = useState('recommended');
   const [currentPage, setCurrentPage] = useState(1);
@@ -544,9 +544,9 @@ export default function CollectionsPage({
             </div>
             <div className="filter-options-list">
               {[
-                '24K Antique Gold Polish',
+                '1-Gram Rold Gold Finish',
+                'Antique Matte Rold Gold',
                 'Rose Gold & Rhodium',
-                'Temple Matte Finish',
                 'Oxidized Silver'
               ].map((fin) => {
                 const isChecked = selectedFinishes.includes(fin);

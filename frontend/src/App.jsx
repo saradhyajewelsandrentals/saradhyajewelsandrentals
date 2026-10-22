@@ -56,7 +56,7 @@ const DEFAULT_OCCASIONS = [
     id: 'festival',
     title: 'Festival',
     subtitle: 'For Festive Days',
-    description: 'Traditional gold temple finish designed for poojas and festive gatherings.',
+    description: 'Traditional 1-gram rold gold temple finish designed for poojas and festive gatherings.',
     image: 'https://images.unsplash.com/photo-1609357605129-26f69add5d6e?q=80&w=800&auto=format&fit=crop',
     buttonText: 'Shop Festive'
   },
@@ -86,18 +86,18 @@ const DEFAULT_PRODUCTS = [
     rentPrice: 899,
     rentDuration: '4 days',
     securityDeposit: 2000,
-    finish: '24K Antique Gold Polish',
+    finish: '1-Gram Rold Gold Finish',
     stoneColor: 'ruby',
     occasion: 'Bridal Wedding',
     image: '/images/choker-set.jpg',
-    description: 'Handcrafted royal choker set encrusted with high-grade semi-precious kundan, ruby gemstones, and delicate pearl cluster drops.',
-    metalType: 'Brass with 22K Micro Gold Plating',
+    description: 'Handcrafted royal choker set in premium 1-gram rold gold, encrusted with high-grade semi-precious kundan, ruby gemstones, and delicate pearl cluster drops.',
+    metalType: 'High-Grade Brass with 1-Gram Micro Rold Gold Plating',
     includes: '1 Choker Necklace, 1 Pair Matching Earrings, 1 Maang Tikka'
   },
   {
     id: 'prod-2',
     name: 'Lakshmi Antique Haram',
-    fullName: 'Lakshmi Antique Temple Gold Haram',
+    fullName: 'Lakshmi Antique Temple Rold Gold Haram',
     category: 'LONG NECKLACE',
     categoryId: 'haaram',
     tag: 'New Arrival',
@@ -108,12 +108,12 @@ const DEFAULT_PRODUCTS = [
     rentPrice: 1299,
     rentDuration: '4 days',
     securityDeposit: 2500,
-    finish: 'Temple Matte Finish',
+    finish: 'Antique Matte Rold Gold',
     stoneColor: 'ruby',
     occasion: 'Festive & Sangeet',
     image: '/images/temple-haaram.jpg',
-    description: 'Intricately carved temple haaram featuring auspicious Goddess Lakshmi central motif framed by handcrafted floral filigree and kemp stones.',
-    metalType: 'Antique Matte Gold Finish with Kemp Stones',
+    description: 'Intricately carved temple haaram in antique matte rold gold, featuring auspicious Goddess Lakshmi central motif framed by handcrafted floral filigree and kemp stones.',
+    metalType: 'Antique Matte Rold Gold Finish over Copper Brass',
     includes: '1 Long Haaram Necklace, Matching Jhumkas'
   },
   {
@@ -129,12 +129,12 @@ const DEFAULT_PRODUCTS = [
     rentPrice: 499,
     rentDuration: '4 days',
     securityDeposit: 1000,
-    finish: '24K Antique Gold Polish',
+    finish: '1-Gram Rold Gold Finish',
     stoneColor: 'emerald',
     occasion: 'Festive & Sangeet',
     image: '/images/peacock-jhumkas.jpg',
-    description: 'Dancing peacock motif jhumkas adorned with natural green emerald enamel, polki accents and resonant pearl seed fringe.',
-    metalType: 'Gold Plated Brass with Meenakari work',
+    description: 'Dancing peacock motif jhumkas adorned with natural green emerald enamel, polki accents and resonant pearl seed fringe in 1-gram rold gold.',
+    metalType: '1-Gram Micro Rold Gold Plated Brass with Meenakari work',
     includes: '1 Pair of Statement Jhumkas with Support Chains'
   },
   {
@@ -151,12 +151,12 @@ const DEFAULT_PRODUCTS = [
     rentPrice: 699,
     rentDuration: '4 days',
     securityDeposit: 1500,
-    finish: '24K Antique Gold Polish',
+    finish: '1-Gram Rold Gold Finish',
     stoneColor: 'ruby',
     occasion: 'Bridal Wedding',
     image: '/images/bangles-set.jpg',
-    description: 'Royal Rajputana openable kadas encrusted with hand-faceted kundan stones and ruby red center gems.',
-    metalType: '24K Antique Gold Plating over Copper',
+    description: 'Royal Rajputana openable kadas encrusted with hand-faceted kundan stones and ruby red center gems in durable 1-gram rold gold micro polish.',
+    metalType: '1-Gram Antique Rold Gold Plating over Copper',
     includes: 'Set of 4 Designer Bangles (Sizes 2.4, 2.6, 2.8)'
   },
   {
@@ -194,12 +194,12 @@ const DEFAULT_PRODUCTS = [
     rentPrice: 999,
     rentDuration: '4 days',
     securityDeposit: 2000,
-    finish: '24K Antique Gold Polish',
+    finish: '1-Gram Rold Gold Finish',
     stoneColor: 'multicolor',
     occasion: 'Festive & Sangeet',
     image: '/images/meenakari-choker.jpg',
-    description: 'Exquisite Rajasthani turquoise meenakari choker adorned with kundan floral medallions and cascading turquoise seed beads.',
-    metalType: 'Brass with Enamel Meenakari and Gold Foil',
+    description: 'Exquisite Rajasthani turquoise meenakari choker adorned with kundan floral medallions and cascading turquoise seed beads in rold gold polish.',
+    metalType: 'Brass with Enamel Meenakari and 1-Gram Rold Gold Foil',
     includes: '1 Choker Necklace with Adjustable Cord, Matching Earrings'
   },
   {
@@ -237,12 +237,12 @@ const DEFAULT_PRODUCTS = [
     rentPrice: 799,
     rentDuration: '4 days',
     securityDeposit: 1800,
-    finish: '24K Antique Gold Polish',
+    finish: '1-Gram Rold Gold Finish',
     stoneColor: 'ruby',
     occasion: 'Bridal Wedding',
     image: '/images/royal-bridal-set.jpg',
-    description: 'Three-tier bridal matha patti framed with uncut polki stones, pearl clusters, and traditional crescent moon centerpiece.',
-    metalType: '24K Gold Polish with Uncut Polki & Pearls',
+    description: 'Three-tier bridal matha patti framed with uncut polki stones, pearl clusters, and traditional crescent moon centerpiece in micro rold gold plating.',
+    metalType: '1-Gram Micro Rold Gold Plated Brass with Uncut Polki & Pearls',
     includes: '1 Matha Patti with Hair Combs, Matching Maang Tikka'
   },
   {
@@ -260,12 +260,12 @@ const DEFAULT_PRODUCTS = [
     rentPrice: 399,
     rentDuration: '4 days',
     securityDeposit: 900,
-    finish: '24K Antique Gold Polish',
+    finish: '1-Gram Rold Gold Finish',
     stoneColor: 'ruby',
     occasion: 'Bridal Wedding',
     image: '/images/rings-collection.jpg',
-    description: 'Magnificent oversized floral statement ring studded with uncut kundan stones, ruby accents, and pearls. Features an adjustable band.',
-    metalType: '24K Micro Gold Plated Brass',
+    description: 'Magnificent oversized floral statement ring studded with uncut kundan stones, ruby accents, and pearls in 1-gram rold gold finish. Features an adjustable band.',
+    metalType: '1-Gram Micro Rold Gold Plated Brass',
     includes: '1 Adjustable Royal Statement Ring (Fits All Sizes)'
   },
   {
@@ -283,12 +283,12 @@ const DEFAULT_PRODUCTS = [
     rentPrice: 349,
     rentDuration: '4 days',
     securityDeposit: 800,
-    finish: '24K Antique Gold Polish',
+    finish: '1-Gram Rold Gold Finish',
     stoneColor: 'white',
     occasion: 'Festive & Sangeet',
     image: '/images/rings-collection.jpg',
-    description: 'Historic Mughal mirror arsi thumb ring framed by luminous pearl micro-beads and hand-cut polki crystals.',
-    metalType: 'High Polish Antique Brass',
+    description: 'Historic Mughal mirror arsi thumb ring framed by luminous pearl micro-beads and hand-cut polki crystals in rold gold finish.',
+    metalType: '1-Gram Rold Gold Antique Brass',
     includes: '1 Arsi Mirror Ring (Adjustable Band)'
   },
   {
@@ -306,12 +306,12 @@ const DEFAULT_PRODUCTS = [
     rentPrice: 299,
     rentDuration: '4 days',
     securityDeposit: 600,
-    finish: 'Temple Matte Finish',
+    finish: 'Antique Matte Rold Gold',
     stoneColor: 'emerald',
     occasion: 'Subtle Ethnic / Puja',
     image: '/images/rings-collection.jpg',
-    description: 'Sculpted 3D peacock motif ring adorned with rubies and emerald drops in antique matte South Indian temple finish.',
-    metalType: 'Matte Antique Copper Brass',
+    description: 'Sculpted 3D peacock motif ring adorned with rubies and emerald drops in antique matte South Indian temple rold gold finish.',
+    metalType: 'Matte Antique Rold Gold over Copper Brass',
     includes: '1 Temple Peacock Ring'
   }
 ];
@@ -326,9 +326,9 @@ const DEFAULT_STEPS = [
 const DEFAULT_INSPIRATIONS = [
   {
     id: 'insp-1',
-    title: 'Temple Gold Elegance',
+    title: 'Temple Rold Gold Elegance',
     subtitle: 'REAL BRIDE LOOK',
-    description: 'Handcrafted pure gold finish antique temple motifs styled with a lush emerald green Kanjeevaram silk saree.',
+    description: 'Handcrafted 1-gram rold gold antique temple motifs styled with a lush emerald green Kanjeevaram silk saree.',
     image: 'https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=800&auto=format&fit=crop',
     tag: 'Real Bride: Ananya'
   },
@@ -351,8 +351,8 @@ const DEFAULT_INSPIRATIONS = [
 ];
 
 const DEFAULT_BADGES = [
-  { id: 'tb-1', icon: 'ShieldCheck', title: 'Material Details', description: 'High-grade brass base with micro-gold plating, kundan & AAA grade CZ stones.' },
-  { id: 'tb-2', icon: 'Sparkles', title: 'Jewellery Care', description: 'Sanitized between wears, guaranteed hygiene and skin-friendly metals.' },
+  { id: 'tb-1', icon: 'ShieldCheck', title: '1-Gram Rold Gold', description: 'Premium copper & brass base with micro rold gold plating, uncut polki & kundan.' },
+  { id: 'tb-2', icon: 'Sparkles', title: 'Jewellery Care', description: 'Sanitized between wears, guaranteed hygiene and 100% skin-friendly metals.' },
   { id: 'tb-3', icon: 'Calendar', title: 'Rental Terms', description: 'Extend 4–8 day options with flexible extensions and 100% damage protection.' },
   { id: 'tb-4', icon: 'Truck', title: 'Express Delivery', description: 'Pan-India express shipping arriving safely 2 days prior to your event.' },
   { id: 'tb-5', icon: 'Gift', title: 'Easy Returns', description: 'Hassle-free doorstep return pickup scheduled at your convenience.' }

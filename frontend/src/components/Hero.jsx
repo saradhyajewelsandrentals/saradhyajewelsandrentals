@@ -23,7 +23,7 @@ export default function Hero({ heroMode, setHeroMode, onExploreShop, onExploreRe
         {/* Eyebrow badge */}
         <div className="hero-pill-badge">
           <Sparkles size={14} style={{ color: '#d4af37', display: 'inline', marginRight: 6 }} />
-          EXCLUSIVE JEWELLERY & RENTALS
+          EXCLUSIVE 1-GRAM ROLD GOLD & RENTALS
         </div>
 
         {/* Main Headline */}
@@ -34,7 +34,7 @@ export default function Hero({ heroMode, setHeroMode, onExploreShop, onExploreRe
 
         {/* Subtitle */}
         <p className="hero-subtitle">
-          Discover bridal sets, temple jewellery, and diamond-look polki to rent for your special moments or purchase for a lifetime.
+          Discover bridal sets, temple jewellery, and diamond-look polki in premium 1-gram rold gold to rent for your special moments or purchase for a lifetime.
         </p>
 
         {/* Experience Rental / Purchase to Own Pill Switch */}
