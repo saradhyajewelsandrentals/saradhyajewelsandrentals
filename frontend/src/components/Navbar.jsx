@@ -8,7 +8,9 @@ export default function Navbar({
   cartCount,
   onOpenCart,
   onOpenWishlist,
-  onOpenSearch
+  onOpenSearch,
+  currentPageView,
+  onNavigate
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
@@ -21,7 +23,15 @@ export default function Navbar({
 
       <div className="container nav-container">
         {/* Brand Logo */}
-        <a href="#" className="brand-logo" id="brand-home-link">
+        <a
+          href="#"
+          className="brand-logo"
+          id="brand-home-link"
+          onClick={(e) => {
+            e.preventDefault();
+            onNavigate('home');
+          }}
+        >
           <div className="logo-symbol">S</div>
           <div className="brand-text-wrap">
             <span className="brand-name">Saradhya</span>
@@ -31,11 +41,57 @@ export default function Navbar({
 
         {/* Desktop Navigation Links */}
         <nav className="nav-links">
-          <a href="#shop" className="nav-link active">Shop</a>
-          <a href="#rent" className="nav-link">Rent</a>
-          <a href="#bridal" className="nav-link">Bridal</a>
-          <a href="#new-arrivals" className="nav-link">New Arrivals</a>
-          <a href="#collections" className="nav-link">Collections</a>
+          <a
+            href="#shop"
+            className={`nav-link ${currentPageView === 'collections' ? 'active' : ''}`}
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate('collections');
+            }}
+          >
+            Shop
+          </a>
+          <a
+            href="#rent"
+            className="nav-link"
+            onClick={(e) => {
+              e.preventDefault();
+              setGlobalMode('rent');
+              onNavigate('collections');
+            }}
+          >
+            Rent
+          </a>
+          <a
+            href="#bridal"
+            className="nav-link"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate('collections');
+            }}
+          >
+            Bridal
+          </a>
+          <a
+            href="#new-arrivals"
+            className="nav-link"
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate('collections');
+            }}
+          >
+            New Arrivals
+          </a>
+          <a
+            href="#collections"
+            className={`nav-link ${currentPageView === 'collections' ? 'active' : ''}`}
+            onClick={(e) => {
+              e.preventDefault();
+              onNavigate('collections');
+            }}
+          >
+            Collections
+          </a>
         </nav>
 
         {/* Right Actions */}

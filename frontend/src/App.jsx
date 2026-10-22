@@ -8,6 +8,7 @@ import StatementBanner from './components/StatementBanner';
 import HowRentingWorks from './components/HowRentingWorks';
 import StyleInspiration from './components/StyleInspiration';
 import TrustBadges from './components/TrustBadges';
+import CollectionsPage from './components/CollectionsPage';
 import Footer from './components/Footer';
 import RentalModal from './components/RentalModal';
 import CartDrawer from './components/CartDrawer';
@@ -17,13 +18,13 @@ import './App.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
-// Fallback initial data ensuring zero delay or broken render
+// Fallback initial categories
 const DEFAULT_CATEGORIES = [
   { id: 'bridal-sets', name: 'Bridal Sets', image: '/images/royal-bridal-set.jpg' },
   { id: 'chokers', name: 'Chokers', image: '/images/choker-set.jpg' },
   { id: 'haaram', name: 'Haaram / Long Necklaces', image: '/images/temple-haaram.jpg' },
   { id: 'earrings', name: 'Earrings & Jhumkas', image: '/images/peacock-jhumkas.jpg' },
-  { id: 'bangles', name: 'Bangles', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=800&auto=format&fit=crop' },
+  { id: 'bangles', name: 'Bangles', image: '/images/bangles-set.jpg' },
   { id: 'kundan-sets', name: 'Bridal Sets / Kundan', image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=800&auto=format&fit=crop' },
   { id: 'hair-accessories', name: 'Hair Accessories', image: '/images/velvet-cushion.jpg' },
   { id: 'waist-belts', name: 'Waist Belts', image: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=800&auto=format&fit=crop' }
@@ -64,34 +65,47 @@ const DEFAULT_OCCASIONS = [
   }
 ];
 
+// All 8 products matching the new Collections / Buy page screenshot
 const DEFAULT_PRODUCTS = [
   {
     id: 'prod-1',
-    name: 'Aura Kundan Necklace Set',
-    category: 'Chokers',
+    name: 'Aaradhya Royal Kundan...',
+    fullName: 'Aaradhya Royal Kundan Choker Set',
+    category: 'CHOKER SET',
     categoryId: 'chokers',
-    tag: 'Rentable',
+    tag: 'Bestseller',
     badgeColor: '#58111a',
-    buyPrice: 7499,
-    rentPrice: 999,
+    rating: 4.9,
+    buyPrice: 3899,
+    originalPrice: 5499,
+    rentPrice: 899,
     rentDuration: '4 days',
-    securityDeposit: 2500,
+    securityDeposit: 2000,
+    finish: '24K Antique Gold Polish',
+    stoneColor: 'ruby',
+    occasion: 'Bridal Wedding',
     image: '/images/choker-set.jpg',
-    description: 'Handcrafted choker set encrusted with high-grade semi-precious kundan, ruby gemstones, emerald drops and delicate pearl cluster drops.',
+    description: 'Handcrafted royal choker set encrusted with high-grade semi-precious kundan, ruby gemstones, and delicate pearl cluster drops.',
     metalType: 'Brass with 22K Micro Gold Plating',
     includes: '1 Choker Necklace, 1 Pair Matching Earrings, 1 Maang Tikka'
   },
   {
     id: 'prod-2',
-    name: 'Padmavati Temple Long Haaram',
-    category: 'Haaram / Long Necklaces',
+    name: 'Lakshmi Antique Haram',
+    fullName: 'Lakshmi Antique Temple Gold Haram',
+    category: 'LONG NECKLACE',
     categoryId: 'haaram',
-    tag: 'Bestseller',
-    badgeColor: '#c59b27',
-    buyPrice: 14500,
-    rentPrice: 1899,
+    tag: 'New Arrival',
+    badgeColor: '#3e522d',
+    rating: 5.0,
+    buyPrice: 4499,
+    originalPrice: 6299,
+    rentPrice: 1299,
     rentDuration: '4 days',
-    securityDeposit: 4000,
+    securityDeposit: 2500,
+    finish: 'Temple Matte Finish',
+    stoneColor: 'ruby',
+    occasion: 'Festive & Sangeet',
     image: '/images/temple-haaram.jpg',
     description: 'Intricately carved temple haaram featuring auspicious Goddess Lakshmi central motif framed by handcrafted floral filigree and kemp stones.',
     metalType: 'Antique Matte Gold Finish with Kemp Stones',
@@ -99,15 +113,20 @@ const DEFAULT_PRODUCTS = [
   },
   {
     id: 'prod-3',
-    name: 'Mayuri Peacock Jhumkas',
-    category: 'Earrings & Jhumkas',
+    name: 'Chandrakala Polki...',
+    fullName: 'Chandrakala Polki Statement Jhumkas',
+    category: 'EARRINGS',
     categoryId: 'earrings',
-    tag: 'New Arrival',
-    badgeColor: '#1b4d3e',
-    buyPrice: 3200,
+    tag: null,
+    rating: 4.8,
+    buyPrice: 2199,
+    originalPrice: null,
     rentPrice: 499,
     rentDuration: '4 days',
     securityDeposit: 1000,
+    finish: '24K Antique Gold Polish',
+    stoneColor: 'emerald',
+    occasion: 'Festive & Sangeet',
     image: '/images/peacock-jhumkas.jpg',
     description: 'Dancing peacock motif jhumkas adorned with natural green emerald enamel, polki accents and resonant pearl seed fringe.',
     metalType: 'Gold Plated Brass with Meenakari work',
@@ -115,19 +134,111 @@ const DEFAULT_PRODUCTS = [
   },
   {
     id: 'prod-4',
-    name: 'Vardhaan Royal Bridal Set',
-    category: 'Bridal Sets',
-    categoryId: 'bridal-sets',
-    tag: 'Most Wanted',
-    badgeColor: '#460c14',
-    buyPrice: 21999,
-    rentPrice: 2999,
+    name: 'Rajwada Kundan Kada Se...',
+    fullName: 'Rajwada Kundan Kada Bangles (Set of 4)',
+    category: 'BANGLES SET',
+    categoryId: 'bangles',
+    tag: 'Limited Edition',
+    badgeColor: '#7e1d24',
+    rating: 4.9,
+    buyPrice: 2999,
+    originalPrice: 3999,
+    rentPrice: 699,
     rentDuration: '4 days',
-    securityDeposit: 6000,
+    securityDeposit: 1500,
+    finish: '24K Antique Gold Polish',
+    stoneColor: 'ruby',
+    occasion: 'Bridal Wedding',
+    image: '/images/bangles-set.jpg',
+    description: 'Royal Rajputana openable kadas encrusted with hand-faceted kundan stones and ruby red center gems.',
+    metalType: '24K Antique Gold Plating over Copper',
+    includes: 'Set of 4 Designer Bangles (Sizes 2.4, 2.6, 2.8)'
+  },
+  {
+    id: 'prod-5',
+    name: 'Solitaire Illusion Pendant...',
+    fullName: 'Solitaire Illusion Pendant & Earring Set',
+    category: 'PENDANT SET',
+    categoryId: 'necklace-sets',
+    tag: null,
+    rating: 4.7,
+    buyPrice: 1899,
+    originalPrice: null,
+    rentPrice: 399,
+    rentDuration: '4 days',
+    securityDeposit: 800,
+    finish: 'Rose Gold & Rhodium',
+    stoneColor: 'white',
+    occasion: 'Reception Gala',
+    image: '/images/pendant-set.jpg',
+    description: 'Minimalist American Diamond solitaire illusion halo pendant with matching round studs on fine rhodium chain.',
+    metalType: '925 Silver Finish with AAA Cubic Zirconia',
+    includes: '1 Pendant on 18-inch Chain, 1 Pair of Matching Studs'
+  },
+  {
+    id: 'prod-6',
+    name: 'Jaipur Meenakari Choker',
+    fullName: 'Jaipur Turquoise Meenakari Choker Set',
+    category: 'CHOKER SET',
+    categoryId: 'chokers',
+    tag: 'Handcrafted',
+    badgeColor: '#4a121a',
+    rating: 4.9,
+    buyPrice: 4299,
+    originalPrice: 5999,
+    rentPrice: 999,
+    rentDuration: '4 days',
+    securityDeposit: 2000,
+    finish: '24K Antique Gold Polish',
+    stoneColor: 'multicolor',
+    occasion: 'Festive & Sangeet',
+    image: '/images/meenakari-choker.jpg',
+    description: 'Exquisite Rajasthani turquoise meenakari choker adorned with kundan floral medallions and cascading turquoise seed beads.',
+    metalType: 'Brass with Enamel Meenakari and Gold Foil',
+    includes: '1 Choker Necklace with Adjustable Cord, Matching Earrings'
+  },
+  {
+    id: 'prod-7',
+    name: 'Tribal Silver Ghungroo...',
+    fullName: 'Tribal Silver Ghungroo Statement Choker',
+    category: 'CHOKER SET',
+    categoryId: 'chokers',
+    tag: null,
+    rating: 4.8,
+    buyPrice: 2499,
+    originalPrice: null,
+    rentPrice: 599,
+    rentDuration: '4 days',
+    securityDeposit: 1200,
+    finish: 'Oxidized Silver',
+    stoneColor: 'white',
+    occasion: 'Subtle Ethnic / Puja',
+    image: '/images/silver-choker.jpg',
+    description: 'Vintage Afghan inspired oxidized silver choker engraved with floral panels and rhythmic ghungroo musical bells.',
+    metalType: 'German Silver Oxidized Finish',
+    includes: '1 Statement Choker with Dori Tie-back'
+  },
+  {
+    id: 'prod-8',
+    name: 'Regal Polki Matha Patti',
+    fullName: 'Regal Polki Matha Patti & Necklace Suite',
+    category: 'MAANG TIKKA',
+    categoryId: 'maang-tikka',
+    tag: 'Best Seller',
+    badgeColor: '#58111a',
+    rating: 5.0,
+    buyPrice: 3499,
+    originalPrice: 4899,
+    rentPrice: 799,
+    rentDuration: '4 days',
+    securityDeposit: 1800,
+    finish: '24K Antique Gold Polish',
+    stoneColor: 'ruby',
+    occasion: 'Bridal Wedding',
     image: '/images/royal-bridal-set.jpg',
-    description: 'Regal bridal combination of choker, long layered necklace, heavy designer earrings, matha patti, and royal nath.',
-    metalType: '24K Gold Polish with Uncut Polki & AAA CZ',
-    includes: 'Choker, Long Necklace, Earrings, Matha Patti, Nath, Haathphool pair'
+    description: 'Three-tier bridal matha patti framed with uncut polki stones, pearl clusters, and traditional crescent moon centerpiece.',
+    metalType: '24K Gold Polish with Uncut Polki & Pearls',
+    includes: '1 Matha Patti with Hair Combs, Matching Maang Tikka'
   }
 ];
 
@@ -174,6 +285,7 @@ const DEFAULT_BADGES = [
 ];
 
 export default function App() {
+  const [currentPageView, setCurrentPageView] = useState('home'); // 'home' | 'collections'
   const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
   const [occasions, setOccasions] = useState(DEFAULT_OCCASIONS);
   const [products, setProducts] = useState(DEFAULT_PRODUCTS);
@@ -182,14 +294,14 @@ export default function App() {
   const [badges, setBadges] = useState(DEFAULT_BADGES);
 
   // Modes & Filtering
-  const [globalMode, setGlobalMode] = useState('rent');
-  const [collectionMode, setCollectionMode] = useState('rent');
+  const [globalMode, setGlobalMode] = useState('buy');
+  const [collectionMode, setCollectionMode] = useState('buy');
   const [activeFilter, setActiveFilter] = useState('all');
 
   // Interactive States
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [cartItems, setCartItems] = useState([]);
-  const [wishlist, setWishlist] = useState([]);
+  const [wishlist, setWishlist] = useState(['prod-1', 'prod-4']);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -226,33 +338,12 @@ export default function App() {
       .then((res) => res.json())
       .then((data) => data.success && setBadges(data.data))
       .catch(() => {});
-  }, []);
 
-  // Fetch products with filter
-  useEffect(() => {
-    let url = `${API_BASE}/products?category=${activeFilter}&mode=${collectionMode}`;
-    fetch(url)
+    fetch(`${API_BASE}/products`)
       .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.data.length > 0) {
-          setProducts(data.data);
-        } else {
-          // Fallback filter locally
-          let filtered = DEFAULT_PRODUCTS;
-          if (activeFilter !== 'all') {
-            filtered = filtered.filter((p) => p.categoryId === activeFilter);
-          }
-          setProducts(filtered);
-        }
-      })
-      .catch(() => {
-        let filtered = DEFAULT_PRODUCTS;
-        if (activeFilter !== 'all') {
-          filtered = filtered.filter((p) => p.categoryId === activeFilter);
-        }
-        setProducts(filtered);
-      });
-  }, [activeFilter, collectionMode]);
+      .then((data) => data.success && data.data.length > 0 && setProducts(data.data))
+      .catch(() => {});
+  }, []);
 
   // Wishlist Toggle
   const handleToggleWishlist = (productId) => {
@@ -268,7 +359,7 @@ export default function App() {
   // Add to Bag / Cart
   const handleAddToCart = (orderItem) => {
     setCartItems([...cartItems, orderItem]);
-    showToast(`Added ${orderItem.product.name} (${orderItem.mode.toUpperCase()}) to your bag.`);
+    showToast(`Added ${orderItem.product.name} to your bag.`);
     setIsCartOpen(true);
   };
 
@@ -293,19 +384,16 @@ export default function App() {
     }
   };
 
-  const scrollToCollections = () => {
-    const el = document.getElementById('collections');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const navigateToCollections = (filter = 'all', mode = null) => {
+    if (mode) setGlobalMode(mode);
+    setActiveFilter(filter);
+    setCurrentPageView('collections');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const scrollToCategories = () => {
-    const el = document.getElementById('categories');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const scrollToHowItWorks = () => {
-    const el = document.getElementById('how-renting-works');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  const navigateToHome = () => {
+    setCurrentPageView('home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -313,73 +401,87 @@ export default function App() {
       {/* Navbar */}
       <Navbar
         globalMode={globalMode}
-        setGlobalMode={setGlobalMode}
+        setGlobalMode={(newMode) => {
+          setGlobalMode(newMode);
+          setCollectionMode(newMode);
+        }}
         wishlistCount={wishlist.length}
         cartCount={cartItems.length}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenWishlist={() => setIsWishlistOpen(true)}
         onOpenSearch={() => setIsSearchOpen(true)}
+        currentPageView={currentPageView}
+        onNavigate={(page) => {
+          if (page === 'home') navigateToHome();
+          else navigateToCollections();
+        }}
       />
 
       <main>
-        {/* 1. Hero Section */}
-        <Hero
-          heroMode={globalMode}
-          setHeroMode={setGlobalMode}
-          onExploreShop={scrollToCategories}
-          onExploreRent={scrollToCollections}
-        />
+        {currentPageView === 'home' ? (
+          <>
+            {/* 1. Hero Section */}
+            <Hero
+              heroMode={globalMode}
+              setHeroMode={setGlobalMode}
+              onExploreShop={() => navigateToCollections('all', 'buy')}
+              onExploreRent={() => navigateToCollections('all', 'rent')}
+            />
 
-        {/* 2. Shop by Category (8 Cards) */}
-        <ShopByCategory
-          categories={categories}
-          onSelectCategory={(catId) => {
-            setActiveFilter(catId);
-            scrollToCollections();
-          }}
-        />
+            {/* 2. Shop by Category (8 Cards) */}
+            <ShopByCategory
+              categories={categories}
+              onSelectCategory={(catId) => navigateToCollections(catId)}
+            />
 
-        {/* 3. Made for Your Next Occasion (4 Cards) */}
-        <MadeForOccasions
-          occasions={occasions}
-          onSelectOccasion={(occId) => {
-            if (occId === 'bridal') setActiveFilter('bridal-sets');
-            scrollToCollections();
-          }}
-        />
+            {/* 3. Made for Your Next Occasion (4 Cards) */}
+            <MadeForOccasions
+              occasions={occasions}
+              onSelectOccasion={(occId) => navigateToCollections(occId)}
+            />
 
-        {/* 4. Discover the Collection (4 Product Cards) */}
-        <DiscoverCollection
-          products={products}
-          collectionMode={collectionMode}
-          setCollectionMode={setCollectionMode}
-          activeFilter={activeFilter}
-          setActiveFilter={setActiveFilter}
-          wishlist={wishlist}
-          onToggleWishlist={handleToggleWishlist}
-          onSelectProduct={(prod) => setSelectedProduct(prod)}
-        />
+            {/* 4. Discover the Collection (Showcase) */}
+            <DiscoverCollection
+              products={products.slice(0, 4)}
+              collectionMode={collectionMode}
+              setCollectionMode={setCollectionMode}
+              activeFilter={activeFilter}
+              setActiveFilter={setActiveFilter}
+              wishlist={wishlist}
+              onToggleWishlist={handleToggleWishlist}
+              onSelectProduct={(prod) => setSelectedProduct(prod)}
+            />
 
-        {/* 5. Statement Bridal Banner ("Wear designer statement bridal sets...") */}
-        <StatementBanner onExploreProcess={scrollToHowItWorks} />
+            {/* 5. Statement Bridal Banner */}
+            <StatementBanner onExploreProcess={() => navigateToCollections('all', 'rent')} />
 
-        {/* 6. How Renting Works (4 Steps) */}
-        <HowRentingWorks steps={steps} />
+            {/* 6. How Renting Works (4 Steps) */}
+            <HowRentingWorks steps={steps} />
 
-        {/* 7. Style Inspiration (3 Cards) */}
-        <StyleInspiration
-          inspirations={inspirations}
-          onSelectLook={(item) => {
-            showToast(`Opening style guide for ${item.title}`);
-            scrollToCollections();
-          }}
-        />
+            {/* 7. Style Inspiration (3 Cards) */}
+            <StyleInspiration
+              inspirations={inspirations}
+              onSelectLook={() => navigateToCollections()}
+            />
 
-        {/* 8. Trust & Value Badges (5 Badges) */}
-        <TrustBadges badges={badges} />
+            {/* 8. Trust & Value Badges */}
+            <TrustBadges badges={badges} />
+          </>
+        ) : (
+          /* COLLECTIONS / BUY JEWELLERY LISTING PAGE */
+          <CollectionsPage
+            mode={globalMode}
+            setMode={setGlobalMode}
+            products={products}
+            wishlist={wishlist}
+            onToggleWishlist={handleToggleWishlist}
+            onSelectProduct={(prod) => setSelectedProduct(prod)}
+            onNavigateHome={navigateToHome}
+          />
+        )}
       </main>
 
-      {/* 9. Footer */}
+      {/* Footer */}
       <Footer onSubscribeNewsletter={handleSubscribeNewsletter} />
 
       {/* Interactive Modals & Drawers */}
