@@ -3,13 +3,13 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAX-_7b2tK7vuGXP6lTJIR9Fyz8Vbt9LkE",
-  authDomain: "saradhya-jewelsandrentals.firebaseapp.com",
-  projectId: "saradhya-jewelsandrentals",
-  storageBucket: "saradhya-jewelsandrentals.firebasestorage.app",
-  messagingSenderId: "617083563163",
-  appId: "1:617083563163:web:97e362af680e274df26a3e",
-  measurementId: "G-XVLDNQ3B5B"
+  apiKey: "AIzaSyDofMh4S_yrpi0XO89BVs7pWTIYuJItqww",
+  authDomain: "saradhya-jewels.firebaseapp.com",
+  projectId: "saradhya-jewels",
+  storageBucket: "saradhya-jewels.firebasestorage.app",
+  messagingSenderId: "230381226848",
+  appId: "1:230381226848:web:89e4da2aac7cf7eeebac05",
+  measurementId: "G-YBJBMQ9ME0"
 };
 
 // Initialize Firebase
