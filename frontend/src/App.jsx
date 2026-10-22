@@ -10,6 +10,7 @@ import StyleInspiration from './components/StyleInspiration';
 import TrustBadges from './components/TrustBadges';
 import CollectionsPage from './components/CollectionsPage';
 import PolicyPages from './components/PolicyPages';
+import AdminPanel from './components/AdminPanel';
 import AuthModal from './components/AuthModal';
 import Footer from './components/Footer';
 import RentalModal from './components/RentalModal';
@@ -537,35 +538,67 @@ export default function App() {
 
   const navigateToPage = (page, filter = 'all', mode = null) => {
     if (page === 'home') {
+      window.history.pushState(null, '', '/');
       navigateToHome();
     } else if (page === 'collections') {
+      window.history.pushState(null, '', '/#collections');
       navigateToCollections(filter, mode);
+    } else if (page === 'admin') {
+      window.history.pushState(null, '', '/admin');
+      setCurrentPageView('admin');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (['privacy', 'terms', 'guidelines', 'contact'].includes(page)) {
+      window.history.pushState(null, '', `/${page}`);
       setCurrentPageView(page);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
+  // URL route listener (supports /admin, #admin, /privacy, etc.)
+  useEffect(() => {
+    const handleUrlRoute = () => {
+      const path = window.location.pathname;
+      const hash = window.location.hash;
+      if (path === '/admin' || hash === '#admin') {
+        setCurrentPageView('admin');
+      } else if (['/privacy', '/terms', '/guidelines', '/contact'].includes(path)) {
+        setCurrentPageView(path.replace('/', ''));
+      } else if (['#privacy', '#terms', '#guidelines', '#contact'].includes(hash)) {
+        setCurrentPageView(hash.replace('#', ''));
+      }
+    };
+
+    handleUrlRoute();
+    window.addEventListener('popstate', handleUrlRoute);
+    window.addEventListener('hashchange', handleUrlRoute);
+    return () => {
+      window.removeEventListener('popstate', handleUrlRoute);
+      window.removeEventListener('hashchange', handleUrlRoute);
+    };
+  }, []);
+
   return (
     <div className="saradhya-app">
-      {/* Navbar */}
-      <Navbar
-        globalMode={globalMode}
-        setGlobalMode={(newMode) => {
-          setGlobalMode(newMode);
-          setCollectionMode(newMode);
-        }}
-        wishlistCount={wishlist.length}
-        cartCount={cartItems.length}
-        onOpenCart={() => setIsCartOpen(true)}
-        onOpenWishlist={() => setIsWishlistOpen(true)}
-        onOpenSearch={() => setIsSearchOpen(true)}
-        currentPageView={currentPageView}
-        activeFilter={activeFilter}
-        onNavigate={navigateToPage}
-        user={user}
-        onOpenAuth={() => setIsAuthOpen(true)}
-      />
+      {/* Navbar (hidden in full admin view for clean dashboard experience) */}
+      {currentPageView !== 'admin' && (
+        <Navbar
+          globalMode={globalMode}
+          setGlobalMode={(newMode) => {
+            setGlobalMode(newMode);
+            setCollectionMode(newMode);
+          }}
+          wishlistCount={wishlist.length}
+          cartCount={cartItems.length}
+          onOpenCart={() => setIsCartOpen(true)}
+          onOpenWishlist={() => setIsWishlistOpen(true)}
+          onOpenSearch={() => setIsSearchOpen(true)}
+          currentPageView={currentPageView}
+          activeFilter={activeFilter}
+          onNavigate={navigateToPage}
+          user={user}
+          onOpenAuth={() => setIsAuthOpen(true)}
+        />
+      )}
 
       <main>
         {currentPageView === 'home' ? (
@@ -629,6 +662,14 @@ export default function App() {
             onNavigateHome={navigateToHome}
             activeFilter={activeFilter}
             setActiveFilter={setActiveFilter}
+          />
+        ) : currentPageView === 'admin' ? (
+          /* DEDICATED ADMIN PANEL (SEPARATE URL /admin) */
+          <AdminPanel
+            products={products}
+            onUpdateProducts={(updated) => setProducts(updated)}
+            onNavigateHome={() => navigateToPage('home')}
+            user={user}
           />
         ) : (
           /* DEDICATED SEPARATE POLICY & CONTACT PAGES (INDIAN STANDARDS) */
